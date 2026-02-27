@@ -1,81 +1,128 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { authService } from './authService';
 
 const Login = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showSpamNotice, setShowSpamNotice] = useState(false);
   
-  const handleLogin = () => {
-    // এখানে আমরা পরে Firebase Google Auth কানেক্ট করব
-    console.log("Initializing Secure Login...");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (isLogin) {
+        await authService.login(email, password);
+        // সরাসরি ড্যাশবোর্ডে যাবে (লজিক আমরা পরে App.tsx এ হ্যান্ডেল করব)
+      } else {
+        await authService.signUp(email, password);
+        setShowSpamNotice(true); // ভেরিফিকেশন মেইল পাঠানোর পর নোটিশ দেখাবে
+      }
+    } catch (err: any) {
+      alert(err.message);
+    }
   };
   
   return (
-    <div className="relative h-full w-full bg-[#020617] flex flex-col items-center justify-center p-8 overflow-hidden">
+    <div className="relative min-h-full w-full bg-[#050505] text-white p-8 flex flex-col justify-center overflow-y-auto">
       
-      {/* ব্যাকগ্রাউন্ড এনিমেটেড গ্লো */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-600/20 blur-[100px] rounded-full" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full" />
-      </div>
+      <AnimatePresence mode="wait">
+        {!showSpamNotice ? (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="w-full space-y-8"
+          >
+            {/* হেডার */}
+            <div className="text-center">
+              <h2 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                {isLogin ? "Welcome Back" : "Create Vault"}
+              </h2>
+              <p className="text-slate-500 mt-2 text-sm uppercase tracking-widest">Pocket Hisab v1.0</p>
+            </div>
 
-      {/* মেইন ভল্ট কার্ড */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 w-full bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] p-10 flex flex-col items-center shadow-2xl"
-      >
-        {/* সিকিউরিটি আইকন (Pulsing Shield) */}
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.05, 1],
-            rotateY: [0, 360] 
-          }}
-          transition={{ 
-            scale: { duration: 2, repeat: Infinity },
-            rotateY: { duration: 5, repeat: Infinity, ease: "linear" }
-          }}
-          className="w-24 h-24 bg-gradient-to-tr from-blue-500 to-emerald-400 rounded-3xl flex items-center justify-center text-5xl mb-8 shadow-[0_0_40px_rgba(59,130,246,0.4)]"
-        >
-          🛡️
-        </motion.div>
+            {/* মেইন ফর্ম */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input 
+                type="email" 
+                placeholder="Email Address" 
+                className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl focus:border-blue-500 transition-all outline-none"
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <input 
+                type="password" 
+                placeholder="Secure Password" 
+                className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl focus:border-blue-500 transition-all outline-none"
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button className="w-full py-4 bg-blue-600 hover:bg-blue-500 font-bold rounded-2xl shadow-lg shadow-blue-600/20 transition-all">
+                {isLogin ? "INITIALIZE ACCESS" : "CREATE IDENTITY"}
+              </button>
+            </form>
 
-        {/* টেক্সট কন্টেন্ট */}
-        <h2 className="text-3xl font-black text-white mb-2 tracking-tight">
-          Secure Access
-        </h2>
-        <p className="text-slate-400 text-center text-sm leading-relaxed mb-10 px-4">
-          Verify your identity to initialize your private financial workspace.
-        </p>
+            <div className="flex items-center gap-4">
+               <div className="flex-1 h-[1px] bg-white/10" />
+               <span className="text-xs text-slate-600 uppercase font-bold">OR</span>
+               <div className="flex-1 h-[1px] bg-white/10" />
+            </div>
 
-        {/* গুগল লগ-ইন বাটন */}
-        <button 
-          onClick={handleLogin}
-          className="group relative w-full py-4 bg-white hover:bg-slate-100 text-black font-black rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.97] shadow-xl overflow-hidden"
-        >
-          {/* গুগল আইকন (সিম্পল এনিমেটেড) */}
-          <svg className="w-6 h-6" viewBox="0 0 48 48">
-            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-          </svg>
-          <span className="tracking-wide text-sm uppercase">Continue with Google</span>
-          
-          {/* গ্লস ইফেক্ট */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-        </button>
+            {/* গেস্ট ও গুগল বাটন (নিচে) */}
+            <div className="space-y-3">
+              <button 
+                onClick={() => authService.loginAsGuest()}
+                className="w-full py-4 border border-white/10 rounded-2xl hover:bg-white/5 transition-all flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-wider"
+              >
+                🕵️ Enter as Guest
+              </button>
+              
+              <button 
+                onClick={() => authService.loginWithGoogle()}
+                className="w-full py-4 bg-white text-black font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-wider active:scale-95"
+              >
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="G" />
+                Google Network
+              </button>
+            </div>
 
-        {/* সিকিউরিটি নোট */}
-        <div className="mt-8 flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-[2px]">
-          <span className="w-1 h-1 bg-emerald-500 rounded-full animate-ping" />
-          End-to-End Encrypted System
-        </div>
-      </motion.div>
-
-      {/* নিচের ফুটার টেক্সট */}
-      <p className="absolute bottom-10 text-slate-600 text-[11px] tracking-widest uppercase">
-        Pocket Hisab v1.0.0
-      </p>
+            <p className="text-center text-sm text-slate-500">
+              {isLogin ? "Need a new vault?" : "Already have access?"} 
+              <span 
+                className="ml-2 text-blue-400 font-bold cursor-pointer underline"
+                onClick={() => setIsLogin(!isLogin)}
+              >
+                {isLogin ? "Sign Up" : "Login"}
+              </span>
+            </p>
+          </motion.div>
+        ) : (
+          /* স্প্যাম নোটিশ স্ক্রিন */
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center space-y-6"
+          >
+            <div className="text-6xl animate-bounce">📧</div>
+            <h2 className="text-2xl font-bold">Check Your Email!</h2>
+            <div className="p-6 bg-blue-600/10 border border-blue-500/30 rounded-[32px] space-y-4">
+               <p className="text-slate-300 text-sm leading-relaxed">
+                  আমরা একটি ভেরিফিকেশন লিঙ্ক পাঠিয়েছি। সেটি খুঁজে না পেলে দয়া করে আপনার <span className="text-red-400 font-bold underline">Spam বা Junk</span> ফোল্ডারটি চেক করুন।
+               </p>
+               <p className="text-xs text-slate-500 italic">
+                  মেইলটি পেলে "Not Spam" হিসেবে মার্ক করুন যাতে পরে দ্রুত মেইল পান।
+               </p>
+            </div>
+            <button 
+              onClick={() => setShowSpamNotice(false)}
+              className="px-8 py-3 bg-white text-black font-bold rounded-full"
+            >
+              Back to Login
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

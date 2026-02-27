@@ -1,26 +1,26 @@
 export const introData = [
   {
     id: 1,
-    title: "Master Your Money Universe",
-    description: "Every penny you spend, every dream you fund—organized in one beautiful cosmic space.",
-    icon: "🌍" // এটা আমাদের ঘূর্ণায়মান পৃথিবী/গোলক হবে
+    title: "Financial Singularity",
+    description: "Your entire monetary universe, perfectly organized in one powerful gravitational center.",
+    type: "core" 
   },
   {
     id: 2,
-    title: "AI Powered Inputs",
-    description: "No more boring typing. Just speak or paste, and let our AI categorize your life.",
-    icon: "✨"
+    title: "Neural AI Input",
+    description: "Speak or paste. Our neural engine decodes your expenses with zero manual effort.",
+    type: "ai"
   },
   {
     id: 3,
-    title: "Isolated Event Silos",
-    description: "Planning a tour or a party? Keep those expenses separate from your daily life.",
-    icon: "🏝️"
+    title: "Siloed Event Horizons",
+    description: "Isolate your tours and special occasions. Keep your daily life's budget untouched.",
+    type: "event"
   },
   {
     id: 4,
-    title: "Zero-Knowledge Privacy",
-    description: "Your data stays on your device. Encrypted, offline, and always under your control.",
-    icon: "🛡️"
+    title: "Fortress of Privacy",
+    description: "Military-grade encryption. Your data never leaves your device's orbit.",
+    type: "secure"
   }
 ];

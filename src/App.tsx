@@ -5,6 +5,7 @@ import { authService } from './features/auth/authService';
 
 const IntroScreen = lazy(() => import('./features/intro/IntroScreen'));
 const Login = lazy(() => import('./features/auth/Login'));
+const Dashboard = lazy(() => import('./features/dashboard/Dashboard')); // নতুন ইম্পোর্ট
 
 function App() {
   const [user, setUser] = useState < any > (null);
@@ -18,28 +19,16 @@ function App() {
     return () => unsubscribe();
   }, []);
   
-  if (loading) return <div className="bg-[#020617] h-screen flex items-center justify-center text-blue-500">Initializing...</div>;
+  if (loading) return <div className="bg-[#020617] h-screen flex items-center justify-center text-blue-500 font-bold tracking-widest animate-pulse">SYSTEM INITIALIZING...</div>;
   
   return (
     <Router>
       <Layout>
-        <Suspense fallback={<div className="text-white">Loading...</div>}>
+        <Suspense fallback={<div className="text-white flex items-center justify-center h-full">Loading Space...</div>}>
           <Routes>
-            {/* যদি ইউজার লগ-ইন থাকে, তবে তাকে ড্যাশবোর্ডে পাঠাবে (আপাতত লগ-আউট বাটন দেখাচ্ছি) */}
             <Route path="/" element={user ? <Navigate to="/dashboard" /> : <IntroScreen />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-            
-            <Route path="/dashboard" element={
-              user ? (
-                <div className="p-10 text-white text-center">
-                  <h1 className="text-3xl font-bold mb-4">Welcome, {user.displayName}! ✨</h1>
-                  <p className="text-slate-400 mb-8">Your unique ID: {user.uid.slice(-6)}</p>
-                  <button onClick={() => authService.logout()} className="bg-red-500/20 text-red-400 px-6 py-2 rounded-xl border border-red-500/30">
-                    System Logout
-                  </button>
-                </div>
-              ) : <Navigate to="/login" />
-            } />
+            <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
           </Routes>
         </Suspense>
       </Layout>

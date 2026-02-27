@@ -1,26 +1,26 @@
 export const introData = [
   {
     id: 1,
-    title: "Financial Singularity",
-    description: "Your entire monetary universe, perfectly organized in one powerful gravitational center.",
-    type: "core" 
+    title: "Your Financial Universe",
+    description: "One glowing core to rule all your expenses. Track, analyze, and master your money flow like a pro.",
+    icon: "💎" // এটাকে আমরা কোডে ৩ডি ইফেক্ট দেব
   },
   {
     id: 2,
-    title: "Neural AI Input",
-    description: "Speak or paste. Our neural engine decodes your expenses with zero manual effort.",
-    type: "ai"
+    title: "AI Powered Inputs",
+    description: "Don't type, just speak. Our AI understands your voice and SMS to log expenses in milliseconds.",
+    icon: "✨"
   },
   {
     id: 3,
-    title: "Siloed Event Horizons",
-    description: "Isolate your tours and special occasions. Keep your daily life's budget untouched.",
-    type: "event"
+    title: "Isolated Event Silos",
+    description: "Planning a trip? Create a dedicated space for your tour expenses without messing up your monthly budget.",
+    icon: "🏝️"
   },
   {
     id: 4,
-    title: "Fortress of Privacy",
-    description: "Military-grade encryption. Your data never leaves your device's orbit.",
-    type: "secure"
+    title: "Encrypted Privacy",
+    description: "Your data is locked in your own device. No clouds, no snoopers—just pure offline security.",
+    icon: "🛡️"
   }
 ];

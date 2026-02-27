@@ -4,48 +4,42 @@
 
 @layer base {
   body {
-    @apply bg-[#020617] overflow-hidden;
+    @apply bg-black text-white antialiased overflow-hidden selection:bg-blue-500/30;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
 
-/* কাস্টম গ্লো এনিমেশন */
-@keyframes glow-pulse {
-  0% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.2); }
-  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-  100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.2); }
+/* আল্ট্রা-স্লিক গ্লাস ইফেক্ট */
+.premium-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.animate-glow {
-  animation: glow-pulse 3s infinite;
+/* কাস্টম মাস্ক এনিমেশন (Shine) */
+.shine-effect {
+  position: relative;
+  overflow: hidden;
 }
 
-/* মোবাইল পোর্টেট মোডের জন্য স্ক্রলবার হাইড করা */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* গ্লাস মরফিজম গ্লস ইফেক্ট */
-.glass-card::after {
+.shine-effect::after {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
+  top: -110%;
+  left: -210%;
   width: 200%;
   height: 200%;
   background: linear-gradient(
-    45deg,
-    transparent,
+    rgba(255, 255, 255, 0),
     rgba(255, 255, 255, 0.05),
-    transparent
+    rgba(255, 255, 255, 0)
   );
-  transform: rotate(45deg);
-  transition: 0.5s;
+  transform: rotate(30deg);
+  transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.glass-card:hover::after {
-  left: 100%;
+.shine-effect:hover::after {
+  top: -40%;
+  left: -40%;
 }

@@ -8,30 +8,25 @@ interface WalletProps {
   color: string;
 }
 
-// Named Export ব্যবহার করা হয়েছে
 export const WalletCard = ({ name, balance, icon, color }: WalletProps) => {
   return (
     <motion.div 
-      whileHover={{ y: -5, scale: 1.02 }}
-      whileTap={{ scale: 0.95 }}
-      className="min-w-[150px] p-5 rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-md relative overflow-hidden group cursor-pointer"
+      whileTap={{ scale: 0.96 }}
+      className="min-w-[180px] h-[110px] p-5 premium-glass rounded-[28px] relative group cursor-pointer shine-effect"
     >
-      {/* ইন্টারনাল গ্লো */}
-      <div className="absolute -top-10 -right-10 w-20 h-20 rounded-full blur-[40px] transition-opacity duration-500 opacity-20 group-hover:opacity-50" 
-           style={{ backgroundColor: color }} />
+      <div className="absolute top-4 right-5 opacity-40 group-hover:opacity-100 transition-opacity">
+        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
+      </div>
       
-      <div className="relative z-10 flex flex-col gap-4">
-        <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-xl shadow-inner border border-white/5">
-          {icon}
-        </div>
+      <div className="h-full flex flex-col justify-between">
+        <span className="text-xl">{icon}</span>
         <div>
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">{name}</p>
-          <h4 className="text-lg font-black tracking-tight mt-1">{balance.toLocaleString()} <span className="text-[10px] text-slate-400">৳</span></h4>
+          <p className="text-[9px] font-bold text-gray-500 uppercase tracking-[2px] mb-1">{name}</p>
+          <h4 className="text-xl font-medium tracking-tighter">
+            {balance.toLocaleString()} <span className="text-[10px] text-gray-400 font-normal">BDT</span>
+          </h4>
         </div>
       </div>
-
-      {/* বর্ডার শাইন এনিমেশন */}
-      <div className="absolute inset-0 border border-white/0 group-hover:border-white/10 rounded-[32px] transition-all duration-500" />
     </motion.div>
   );
 };

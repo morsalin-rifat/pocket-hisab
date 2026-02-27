@@ -1,20 +1,20 @@
 export const introData = [
   {
     id: 1,
-    title: "Revolutionize Your Data Entry",
-    description: "Experience the magic of AI. Capture expenses from your voice or SMS instantly—no typing required.",
-    icon: "🧠"
+    title: "Magic Input",
+    description: "Just speak or paste your SMS. Let our AI handle the math for you.",
+    icon: "✨"
   },
   {
     id: 2,
-    title: "Isolate Every Occasion",
-    description: "Manage tours, weddings, or special events in dedicated silos. Your daily budget remains undisturbed.",
-    icon: "✈️"
+    title: "Smart Events",
+    description: "Keep your tours and parties separate from your daily expenses.",
+    icon: "🏝️"
   },
   {
     id: 3,
-    title: "Absolute Data Sovereignty",
-    description: "Your financial reality stays local. Fully offline, highly secure, and encrypted only for your eyes.",
-    icon: "🛡️"
+    title: "Pure Privacy",
+    description: "Fully offline and encrypted. Your data never leaves your phone.",
+    icon: "🔐"
   }
 ];

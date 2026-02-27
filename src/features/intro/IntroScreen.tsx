@@ -11,78 +11,83 @@ const IntroScreen = () => {
     if (currentSlide < introData.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      // শেষ স্লাইডে চাপ দিলে লগ-ইন পেজে যাবে
       navigate('/login');
     }
   };
   
   return (
-    <div className="relative h-full w-full flex flex-col items-center justify-between p-8 overflow-hidden bg-[#0d1425]">
+    <div className="relative h-full w-full bg-[#050505] flex flex-col justify-between overflow-hidden">
       
-      {/* ব্যাকগ্রাউন্ড হলোগ্রাফিক গ্লো (Aurora Effect) */}
-      <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[100%] h-[40%] bg-emerald-600/10 blur-[120px] rounded-full pointer-events-none" />
+      {/* ব্যাকগ্রাউন্ড ডায়নামিক লাইট */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], x: [0, 30, 0], y: [0, 50, 0] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="absolute -top-20 -left-20 w-80 h-80 bg-blue-600/20 blur-[100px] rounded-full"
+        />
+        <motion.div 
+          animate={{ scale: [1, 1.3, 1], x: [0, -40, 0], y: [0, -60, 0] }}
+          transition={{ duration: 12, repeat: Infinity, delay: 1 }}
+          className="absolute -bottom-20 -right-20 w-80 h-80 bg-emerald-500/10 blur-[100px] rounded-full"
+        />
+      </div>
 
-      {/* স্লাইডার কন্টেন্ট */}
-      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+      {/* মেইন কন্টেন্ট */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
-            initial={{ opacity: 0, x: 50, scale: 0.9 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -50, scale: 0.9 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="flex flex-col items-center text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className="w-full flex flex-col items-center"
           >
-            {/* থ্রিডি আইকন এনিমেশন */}
-            <motion.div 
-              animate={{ y: [0, -15, 0] }} 
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="text-8xl mb-8 drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]"
-            >
-              {introData[currentSlide].icon}
-            </motion.div>
+            {/* আইকন কন্টেইনার */}
+            <div className="relative mb-12">
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 border-2 border-dashed border-blue-500/30 rounded-full scale-150"
+              />
+              <div className="w-32 h-32 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl flex items-center justify-center text-6xl shadow-2xl">
+                {introData[currentSlide].icon}
+              </div>
+            </div>
 
-            {/* টেক্সট কন্টেন্ট */}
-            <h1 className="text-3xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+            {/* টেক্সট */}
+            <h1 className="text-4xl font-bold text-white mb-4 tracking-tight text-center">
               {introData[currentSlide].title}
             </h1>
-            <p className="text-slate-400 text-lg leading-relaxed px-2">
+            <p className="text-gray-400 text-lg text-center leading-relaxed max-w-[280px]">
               {introData[currentSlide].description}
             </p>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* নিচের অংশ: প্রগ্রেস বার ও বাটন */}
-      <div className="relative z-20 w-full flex flex-col items-center gap-8 pb-10">
+      {/* ফুটার কন্ট্রোল */}
+      <div className="relative z-20 p-8 pb-12 flex flex-col items-center gap-10">
         
-        {/* কাস্টম প্রগ্রেস ডটস */}
-        <div className="flex gap-3">
+        {/* ইন্ডিকেটর */}
+        <div className="flex gap-2">
           {introData.map((_, index) => (
             <div 
               key={index} 
-              className={`h-1.5 transition-all duration-300 rounded-full ${index === currentSlide ? 'w-8 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]' : 'w-2 bg-slate-700'}`}
+              className={`h-1 rounded-full transition-all duration-500 ${index === currentSlide ? 'w-10 bg-blue-500' : 'w-2 bg-white/10'}`}
             />
           ))}
         </div>
 
-        {/* হাই-টেক বাটন */}
+        {/* বাটন */}
         <button 
           onClick={nextSlide}
-          className="group relative w-full py-4 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-2xl font-bold text-white overflow-hidden transition-all active:scale-95"
+          className="w-full py-5 bg-white text-black font-bold rounded-2xl text-lg shadow-[0_10px_30px_rgba(255,255,255,0.1)] active:scale-[0.98] transition-all overflow-hidden relative group"
         >
-          <span className="relative z-10 tracking-widest uppercase">
-            {currentSlide === introData.length - 1 ? "Initialize My System" : "Next Protocol"}
+          <span className="relative z-10">
+            {currentSlide === introData.length - 1 ? "Start My Journey" : "Next"}
           </span>
-          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-          
-          {/* স্ক্যানিং লাইট ইফেক্ট */}
-          <motion.div 
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-          />
+          <div className="absolute inset-0 bg-gray-200 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
         </button>
       </div>
 

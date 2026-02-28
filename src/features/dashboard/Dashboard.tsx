@@ -1,73 +1,64 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { authService } from '../auth/authService';
-import { WalletCard } from './components/WalletCard';
-import { LiquidBalance } from './components/LiquidBalance';
+import { LiquidVisualizer } from './components/LiquidVisualizer';
+import { WalletStack } from './components/WalletStack';
 
 const Dashboard = ({ user }: { user: any }) => {
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-  
   return (
-    <div className="relative h-full w-full bg-black flex flex-col overflow-hidden">
+    <div className="relative h-full w-full bg-[#010409] flex flex-col overflow-hidden">
       
-      {/* ১. এলিট হেডার */}
-      <div className="p-6 pt-10 flex items-center justify-between z-20">
+      {/* ১. প্রিমিয়াম হেডার */}
+      <div className="px-8 pt-12 pb-6 flex items-center justify-between z-30">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-gray-800 to-gray-900 border border-white/10 flex items-center justify-center font-bold text-sm shadow-2xl">
-            {user?.displayName?.[0] || 'U'}
+          <div className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center font-bold text-xs">
+            {user?.displayName?.[0] || 'C'}
           </div>
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-white/90">{greeting}, {user?.displayName?.split(' ')[0]}! 👋</h1>
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">Ready for your financial audit?</p>
+            <h1 className="text-lg font-bold tracking-tight">{user?.displayName?.split(' ')[0]}</h1>
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[2px]">System Online</p>
           </div>
         </div>
-        <button onClick={() => authService.logout()} className="w-10 h-10 rounded-full premium-glass flex items-center justify-center opacity-60">
-           ✕
+        <button onClick={() => authService.logout()} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center opacity-40 hover:opacity-100 transition-all">
+          ✕
         </button>
       </div>
 
-      {/* ২. মেইন ফিড (Scrollable) */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-6 pb-32">
+      {/* ২. মেইন স্ক্রল এরিয়া */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-8 pb-32">
         
-        {/* লিকুইড ভিজ্যুয়ালাইজার বক্স */}
-        <div className="mt-4 mb-10">
-          <LiquidBalance percentage={75} amount="0.00" />
-        </div>
+        {/* দ্যা লিকুইড ভিজ্যুয়ালাইজার (১০০% বাজেট থেকে কমানোর টেস্ট হিসেবে ৮০% দেওয়া হলো) */}
+        <LiquidVisualizer percentage={80} amount="12,500.00" />
 
-        {/* এসেটস / ওয়ালেটস গ্রিড */}
-        <div className="mb-10">
-          <div className="flex justify-between items-center mb-6 px-1">
-            <h3 className="text-[10px] font-bold uppercase tracking-[3px] text-gray-500">Wealth Vaults</h3>
-            <button className="text-[10px] font-bold text-blue-500">+ ADD CARD</button>
+        {/* ওয়ালেট স্ট্যাক (তাসের মতো কার্ড) */}
+        <div className="mb-12">
+          <div className="flex justify-between items-center mb-4 px-1">
+            <h3 className="text-[10px] font-bold uppercase tracking-[3px] text-gray-500">Wealth Stack</h3>
+            <span className="text-[9px] text-blue-500 animate-pulse font-bold">TAP TO SWITCH</span>
           </div>
-          <div className="flex gap-4 overflow-x-auto no-scrollbar">
-            <WalletCard name="Physical Cash" balance={0} icon="💳" color="#3b82f6" />
-            <WalletCard name="MFS Wallet" balance={0} icon="📱" color="#ec4899" />
-            <WalletCard name="Vault" balance={0} icon="🏛️" color="#10b981" />
-          </div>
+          <WalletStack />
         </div>
 
         {/* রিসেন্ট অ্যাক্টিভিটি টাইটেল */}
-        <h3 className="text-[10px] font-bold uppercase tracking-[3px] text-gray-500 mb-6 px-1 text-center">Recent System Activity</h3>
-        <div className="text-center py-12 opacity-20 italic text-sm">No transactions to analyze yet...</div>
+        <h3 className="text-[10px] font-bold uppercase tracking-[3px] text-gray-500 mb-6">Recent Records</h3>
+        <div className="py-10 text-center border border-dashed border-white/5 rounded-[40px] opacity-20 italic text-sm">
+          No records in this sector.
+        </div>
       </div>
 
-      {/* ৩. ফ্লোটিং গ্লাস ডক (The Elite Dock) */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] z-50">
-        <div className="premium-glass p-3 rounded-[35px] flex items-center justify-between shadow-2xl">
-          <button className="flex-1 flex flex-col items-center py-2 group">
-             <span className="text-xl opacity-40 group-hover:opacity-100 transition-all">📝</span>
-             <span className="text-[8px] font-bold uppercase tracking-[2px] text-gray-500 mt-1">Manual</span>
+      {/* ৩. ফ্লোটিং অ্যাকশন ডক */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[85%] z-40">
+        <div className="bg-white/5 backdrop-blur-2xl p-2 rounded-[32px] flex items-center justify-between border border-white/10 shadow-2xl">
+          <button className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+            Scribe
           </button>
           
-          <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(37,99,235,0.4)] -mt-12 border-[6px] border-black transition-transform active:scale-90">
-             <span className="text-2xl">🏠</span>
+          <div className="w-14 h-14 bg-blue-600 rounded-[22px] flex items-center justify-center shadow-lg shadow-blue-600/30 -mt-8 border-[6px] border-[#010409] rotate-45 active:rotate-[60deg] transition-all">
+             <span className="text-2xl text-white -rotate-45">✨</span>
           </div>
 
-          <button className="flex-1 flex flex-col items-center py-2 group">
-             <span className="text-xl opacity-40 group-hover:opacity-100 transition-all">✨</span>
-             <span className="text-[8px] font-bold uppercase tracking-[2px] text-gray-500 mt-1">AI Entry</span>
+          <button className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+            Nexus
           </button>
         </div>
       </div>

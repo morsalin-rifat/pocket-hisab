@@ -4,36 +4,32 @@
 
 @layer base {
   body {
-    @apply bg-black text-white antialiased overflow-hidden;
+    @apply bg-[#010409] text-white antialiased overflow-hidden selection:bg-cyan-500/30;
     font-family: 'Inter', sans-serif;
   }
 }
 
-/* লিকুইড ওয়েভ এনিমেশন */
-.water-wave {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 200%;
-  height: 200%;
-  background: rgba(59, 130, 246, 0.6);
-  border-radius: 38%;
-  animation: drift 6s infinite linear;
+/* ৩ডি ওয়েভ এনিমেশন */
+@keyframes wave-move {
+  0% { transform: translateX(0) translateZ(0) scaleY(1); }
+  50% { transform: translateX(-25%) translateZ(0) scaleY(0.8); }
+  100% { transform: translateX(-50%) translateZ(0) scaleY(1); }
 }
 
-.water-wave:nth-child(2) {
-  background: rgba(16, 185, 129, 0.3);
-  animation: drift 9s infinite linear;
-  border-radius: 42%;
+.animate-wave {
+  animation: wave-move 8s linear infinite;
 }
 
-@keyframes drift {
-  from { transform: rotate(0deg) translate(-25%, -70%); }
-  to { transform: rotate(360deg) translate(-25%, -70%); }
+.animate-wave-fast {
+  animation: wave-move 5s linear infinite;
 }
 
-.premium-glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* কাঁচের বক্সের ইফেক্ট */
+.glass-tank {
+  background: rgba(255, 255, 255, 0.01);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
 }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }

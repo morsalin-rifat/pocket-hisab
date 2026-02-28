@@ -1,8 +1,7 @@
-import { collection, addDoc, query, where, onSnapshot, Timestamp } from "firebase/firestore";
+import { collection, addDoc, query, where, onSnapshot, Timestamp, doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
 export const transactionService = {
-  // ১. লেনদেন যোগ করা
   addTransaction: async (userId: string, data: any) => {
     try {
       return await addDoc(collection(db, "transactions"), {
@@ -11,14 +10,20 @@ export const transactionService = {
         category: data.category,
         note: data.note || "",
         walletId: data.walletId || "Cash",
-        type: data.type || "expense", // income, expense, transfer
+        type: data.type || "expense",
         fee: Number(data.fee || 0),
         date: Timestamp.now()
       });
     } catch (e) { throw e; }
   },
   
-  // ২. রিয়েল-টাইম ডাটা সিঙ্ক
+  // নতুন ডিলিট ফাংশন
+  deleteTransaction: async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "transactions", id));
+    } catch (e) { throw e; }
+  },
+  
   subscribeTransactions: (userId: string, callback: (data: any[]) => void) => {
     const q = query(collection(db, "transactions"), where("userId", "==", userId));
     return onSnapshot(q, (snapshot) => {

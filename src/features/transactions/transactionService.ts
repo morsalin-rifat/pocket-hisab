@@ -9,8 +9,8 @@ export const transactionService = {
         amount: Number(data.amount),
         category: data.category,
         note: data.note || "",
-        walletId: data.walletId || "Cash", // Default Cash
-        type: data.type || "expense", // expense, income, transfer
+        walletId: data.walletId || "Cash",
+        type: data.type || "expense", // income, expense, transfer
         fee: Number(data.fee || 0),
         date: Timestamp.now()
       });
@@ -20,8 +20,7 @@ export const transactionService = {
   subscribeTransactions: (userId: string, callback: (data: any[]) => void) => {
     const q = query(collection(db, "transactions"), where("userId", "==", userId));
     return onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      callback(data);
+      callback(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
   }
 };

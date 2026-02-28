@@ -6,40 +6,46 @@ import {
   sendEmailVerification,
   signOut,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence
 } from "firebase/auth";
 import { auth, googleProvider } from "../../lib/firebase";
 
+// সেশন যেন রিফ্রেশ দিলেও না হারায় তার জন্য Persistence সেটআপ
+setPersistence(auth, browserLocalPersistence);
+
 export const authService = {
-  // ১. গেস্ট মোড (Anonymous Login with Unique ID)
   loginAsGuest: async () => {
     const userCredential = await signInAnonymously(auth);
     const shortId = userCredential.user.uid.slice(-4).toUpperCase();
-    await updateProfile(userCredential.user, {
-      displayName: `Guest_${shortId}`
-    });
+    await updateProfile(userCredential.user, { displayName: `Guest_${shortId}` });
+    localStorage.setItem('isLoggedIn', 'true'); // লোকাল স্টোরেজে সেভ
     return userCredential.user;
   },
   
-  // ২. সাইন আপ (নাম সহ)
   signUp: async (email: string, pass: string, name: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-    await updateProfile(userCredential.user, {
-      displayName: name
-    });
+    await updateProfile(userCredential.user, { displayName: name });
     await sendEmailVerification(userCredential.user);
+    localStorage.setItem('isLoggedIn', 'true');
     return userCredential.user;
   },
   
   login: async (email: string, pass: string) => {
-    return await signInWithEmailAndPassword(auth, email, pass);
+    const res = await signInWithEmailAndPassword(auth, email, pass);
+    localStorage.setItem('isLoggedIn', 'true');
+    return res;
   },
   
   loginWithGoogle: async () => {
-    return await signInWithPopup(auth, googleProvider);
+    const res = await signInWithPopup(auth, googleProvider);
+    localStorage.setItem('isLoggedIn', 'true');
+    return res;
   },
   
   logout: async () => {
+    localStorage.removeItem('isLoggedIn');
     return await signOut(auth);
   },
   

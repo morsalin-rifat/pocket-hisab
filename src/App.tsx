@@ -6,6 +6,7 @@ import { authService } from './features/auth/authService';
 const IntroScreen = lazy(() => import('./features/intro/IntroScreen'));
 const Login = lazy(() => import('./features/auth/Login'));
 const Dashboard = lazy(() => import('./features/dashboard/Dashboard'));
+const History = lazy(() => import('./features/history/History')); // নতুন ইম্পোর্ট
 
 function App() {
   const [user, setUser] = useState < any > (null);
@@ -20,7 +21,6 @@ function App() {
     return () => unsubscribe();
   }, []);
   
-  // প্রিমিয়াম স্প্ল্যাশ স্ক্রিন (বিরক্তি কমাতে এটি ২ সেকেন্ডের বেশি থাকবে না)
   if (loading && hasLoggedInBefore) {
     return (
       <div className="bg-[#020617] h-screen flex flex-col items-center justify-center">
@@ -44,6 +44,7 @@ function App() {
             <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <IntroScreen />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
             <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" replace />} />
+            <Route path="/history" element={user ? <History user={user} /> : <Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

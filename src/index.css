@@ -4,42 +4,24 @@
 
 @layer base {
   body {
-    @apply bg-black text-white antialiased overflow-hidden selection:bg-blue-500/30;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply bg-[#050505] text-white antialiased overflow-hidden selection:bg-blue-500/30;
+    font-family: 'Inter', sans-serif;
   }
 }
 
-/* আল্ট্রা-স্লিক গ্লাস ইফেক্ট */
-.premium-glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* হাই-এন্ড কার্ড ডিজাইন */
+.card-shadow {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1);
 }
 
-/* কাস্টম মাস্ক এনিমেশন (Shine) */
-.shine-effect {
-  position: relative;
-  overflow: hidden;
-}
+/* কাস্টম স্ক্রলবার হাইড */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.shine-effect::after {
-  content: "";
-  position: absolute;
-  top: -110%;
-  left: -210%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0)
-  );
-  transform: rotate(30deg);
-  transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-}
-
-.shine-effect:hover::after {
-  top: -40%;
-  left: -40%;
+/* ব্লার ব্যাকগ্রাউন্ড */
+.glass-panel {
+  background: rgba(15, 15, 15, 0.7);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }

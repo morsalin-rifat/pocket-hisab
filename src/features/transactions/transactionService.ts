@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, onSnapshot, Timestamp, doc, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, onSnapshot, orderBy, Timestamp, doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
 export const transactionService = {
@@ -10,6 +10,7 @@ export const transactionService = {
         category: data.category,
         note: data.note || "",
         walletId: data.walletId || "Cash",
+        toWalletId: data.toWalletId || "", // ট্রান্সফারের জন্য
         type: data.type || "expense",
         fee: Number(data.fee || 0),
         date: Timestamp.now()
@@ -17,18 +18,14 @@ export const transactionService = {
     } catch (e) { throw e; }
   },
   
-  // নতুন ডিলিট ফাংশন
   deleteTransaction: async (id: string) => {
-    try {
-      await deleteDoc(doc(db, "transactions", id));
-    } catch (e) { throw e; }
+    return await deleteDoc(doc(db, "transactions", id));
   },
   
   subscribeTransactions: (userId: string, callback: (data: any[]) => void) => {
     const q = query(collection(db, "transactions"), where("userId", "==", userId));
     return onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      callback(data);
+      callback(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
   }
 };

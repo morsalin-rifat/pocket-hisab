@@ -29,14 +29,18 @@ const Dashboard = ({ user }: { user: any }) => {
       data.forEach(t => {
         const amt = Number(t.amount);
         const fee = Number(t.fee || 0);
-        const w = t.walletId || "Cash";
+        const wFrom = t.walletId;
+        const wTo = t.toWalletId;
 
         if (t.type === 'income') {
-          if (w === 'Cash') cash += amt; if (w === 'bKash') bkash += amt; if (w === 'Bank') bank += amt;
+          if (wFrom === 'Cash') cash += amt; if (wFrom === 'bKash') bkash += amt; if (wFrom === 'Bank') bank += amt;
         } else if (t.type === 'expense') {
-          if (w === 'Cash') cash -= amt; if (w === 'bKash') bkash -= amt; if (w === 'Bank') bank -= amt;
+          if (wFrom === 'Cash') cash -= amt; if (wFrom === 'bKash') bkash -= amt; if (wFrom === 'Bank') bank -= amt;
         } else if (t.type === 'transfer') {
-          bkash -= (amt + fee); cash += amt;
+          // From Wallet
+          if (wFrom === 'Cash') cash -= (amt + fee); if (wFrom === 'bKash') bkash -= (amt + fee); if (wFrom === 'Bank') bank -= (amt + fee);
+          // To Wallet
+          if (wTo === 'Cash') cash += amt; if (wTo === 'bKash') bkash += amt; if (wTo === 'Bank') bank += amt;
         }
       });
       setBalances({ Cash: cash, bKash: bkash, Bank: bank });
@@ -53,7 +57,6 @@ const Dashboard = ({ user }: { user: any }) => {
 
   return (
     <div className="relative h-full w-full bg-black flex flex-col overflow-hidden">
-      {/* হেডার */}
       <div className="px-8 pt-12 pb-4 flex items-center justify-between z-30">
         <div className="flex items-center gap-3" onClick={() => setIsBudgetOpen(true)}>
           <motion.div whileHover={{ rotate: 10 }} className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-sm shadow-xl overflow-hidden">
@@ -62,7 +65,7 @@ const Dashboard = ({ user }: { user: any }) => {
           <div><p className="text-[9px] font-black text-white/30 uppercase tracking-[3px]">Net Worth</p>
           <h1 className="text-lg font-bold tracking-tight text-emerald-400">{totalAssets.toLocaleString()} ৳</h1></div>
         </div>
-        <button onClick={() => authService.logout()} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs opacity-40 transition-all">✕</button>
+        <button onClick={() => authService.logout()} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs opacity-40">✕</button>
       </div>
 
       <div className="flex-1 overflow-y-auto no-scrollbar px-8 pb-48 pt-4">
@@ -79,15 +82,17 @@ const Dashboard = ({ user }: { user: any }) => {
             {transactions.slice(0, 10).map((t) => (
               <div key={t.id} className="p-5 bg-white/[0.02] border border-white/5 rounded-[32px] flex justify-between items-center group">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-lg">{t.type === 'income' ? '💰' : (t.category?.split(' ')[0] || '💸')}</div>
+                  <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-lg">{t.type === 'income' ? '💰' : (t.type === 'transfer' ? '🔄' : (t.category?.split(' ')[0] || '💸'))}</div>
                   <div>
-                    <p className="text-xs font-black text-white/80">{t.type === 'income' ? 'Cash In' : (t.category?.split(' ').slice(1).join(' ') || t.category)}</p>
+                    <p className="text-xs font-black text-white/80">{t.type === 'income' ? 'Cash In' : (t.type === 'transfer' ? 'Transfer' : (t.category?.split(' ').slice(1).join(' ') || t.category))}</p>
                     <p className="text-[9px] text-white/20 uppercase tracking-[1px] line-clamp-1">{t.note || 'Synced'}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={`text-sm font-black ${t.type === 'income' ? 'text-emerald-400' : 'text-red-500/80'}`}>{t.type === 'income' ? `+${t.amount}` : `-${t.amount}`} ৳</p>
-                  <p className="text-[7px] text-white/10 uppercase font-bold">{t.walletId}</p>
+                  <p className={`text-sm font-black ${t.type === 'income' ? 'text-emerald-400' : (t.type === 'transfer' ? 'text-blue-400' : 'text-red-500/80')}`}>
+                    {t.type === 'income' ? `+${t.amount}` : (t.type === 'transfer' ? 'Synced' : `-${t.amount}`)} ৳
+                  </p>
+                  <p className="text-[7px] text-white/10 uppercase font-bold">{t.walletId} {t.toWalletId && `→ ${t.toWalletId}`}</p>
                 </div>
               </div>
             ))}
@@ -96,10 +101,10 @@ const Dashboard = ({ user }: { user: any }) => {
       </div>
 
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-[90%] z-40">
-        <div className="bg-zinc-900/80 backdrop-blur-3xl p-2.5 rounded-[40px] flex items-center justify-between border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)]">
-          <button onClick={() => setIsManualOpen(true)} className="flex-1 py-3.5 text-[10px] font-black tracking-[2px] text-white/40 uppercase text-center active:scale-90 transition-all">Manual</button>
-          <motion.button onClick={() => setIsMagicOpen(true)} whileHover={{ scale: 1.15, rotate: 5, boxShadow: "0 0 30px rgba(6, 182, 212, 0.4)" }} whileTap={{ scale: 0.9 }} className="w-16 h-16 bg-gradient-to-tr from-blue-600 via-cyan-500 to-emerald-400 rounded-[28px] flex items-center justify-center -mt-14 border-[6px] border-black text-3xl shadow-2xl transition-all relative overflow-hidden group">✨</motion.button>
-          <button onClick={() => navigate('/history')} className="flex-1 py-3.5 text-[10px] font-black tracking-[2px] text-white/40 uppercase text-center active:scale-90 transition-all">History</button>
+        <div className="bg-zinc-900/80 backdrop-blur-3xl p-2.5 rounded-[40px] flex items-center justify-between border border-white/10 shadow-2xl">
+          <button onClick={() => setIsManualOpen(true)} className="flex-1 py-3.5 text-[10px] font-black tracking-[2px] text-white/40 uppercase text-center active:scale-90">Manual</button>
+          <motion.button onClick={() => setIsMagicOpen(true)} whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }} className="w-16 h-16 bg-gradient-to-tr from-blue-600 via-cyan-500 to-emerald-400 rounded-[28px] flex items-center justify-center -mt-14 border-[5px] border-black text-3xl shadow-2xl">✨</motion.button>
+          <button onClick={() => navigate('/history')} className="flex-1 py-3.5 text-[10px] font-black tracking-[2px] text-white/40 uppercase text-center active:scale-90">History</button>
         </div>
       </div>
 

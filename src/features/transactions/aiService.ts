@@ -6,37 +6,33 @@ export const aiService = {
     
     let category = "🛍️ Others";
     let type = "expense";
-    let senderOrReceiver = "";
-    let walletId = "Cash"; // ডিফল্ট
-    
-    // ১. ইনকাম ডিটেকশন (টাকা আসা)
-    if (/(salary|income|cash in|received|got|bonus|পেলাম|জমা|আসলো|দিল|পেলুম|পাঠালো)/.test(input)) {
+    let walletId = "Cash"; 
+    let toWalletId = ""; 
+    let fee = 0;
+
+    // ১. ট্রান্সফার/ক্যাশ আউট ডিটেকশন
+    if (/(cash out|transfer|ক্যাশ আউট|পাঠালাম|নিলাম|transfer)/.test(input)) {
+      type = "transfer";
+      category = "🔄 Transfer";
+      walletId = input.includes("bkash") || input.includes("বিকাশ") ? "bKash" : "Bank";
+      toWalletId = "Cash";
+      if (walletId === "bKash") fee = amount * 0.0185;
+    } 
+    // ২. ইনকাম ডিটেকশন
+    else if (/(salary|income|received|got|bonus|পেলাম|জমা|আসলো|দিল)/.test(input)) {
       type = "income";
       category = "💰 Income";
-      
-      // কে টাকা দিলো তা বের করার চেষ্টা (Simple logic)
-      const fromMatch = input.match(/(from|gave|by|কাছ থেকে|দিল) ([\w\u0980-\u09FF]+)/);
-      if (fromMatch) senderOrReceiver = fromMatch[2];
     }
-    
-    // ২. ওয়ালেট ডিটেকশন
-    if (input.includes("bkash") || input.includes("বিকাশ")) walletId = "bKash";
-    else if (input.includes("bank") || input.includes("ব্যাংক")) walletId = "Bank";
-    
-    // ৩. ক্যাটাগরি ডিটেকশন
+    // ৩. ক্যাটাগরি (Expense হলে)
     if (type === "expense") {
       if (/(bus|fare|ভাড়া|যাতায়াত|রিকশা)/.test(input)) category = "🚗 Transport";
-      else if (/(food|tea|খাবার|চা|সিঙ্গারা)/.test(input)) category = "🍔 Food";
-      else if (/(recharge|mobile|রিচার্জ|মোবাইল)/.test(input)) category = "📱 Recharge";
+      else if (/(food|tea|খাবার|চা|সিঙ্গারা|lunch|dinner)/.test(input)) category = "🍔 Food";
+      else if (/(recharge|mobile|phone|রিচার্জ|মোবাইল)/.test(input)) category = "📱 Recharge";
     }
-    
+
     return {
-      amount,
-      category,
-      type,
-      note: text,
-      sender: senderOrReceiver,
-      walletId,
+      amount, category, type, note: text, fee: parseFloat(fee.toFixed(2)),
+      walletId, toWalletId,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
   }

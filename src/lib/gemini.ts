@@ -1,49 +1,43 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// আপনার এপিআই কী সরাসরি এখানে দেওয়া হয়েছে যাতে কোনো মিসিং না হয়
 const API_KEY = "AIzaSyDfia6hhF5XcPmJpoqDlzP8cPgAl3tMqNE";
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  generationConfig: { responseMimeType: "application/json" }
+});
 
 export const geminiService = {
   analyzeInput: async (text: string) => {
-    const prompt = `
-      Parse this text: "${text}". 
-      Return ONLY a valid JSON object. Do not include any markdown, backticks, or extra text.
-      JSON structure:
-      {
-        "amount": number,
-        "category": "🍔 Food" | "🚗 Transport" | "📱 Recharge" | "🛍️ Others",
-        "type": "expense" | "income",
-        "note": "short description",
-        "walletId": "Cash" | "bKash" | "Bank"
-      }
-    `;
+    const prompt = `Task: Parse "${text}" into JSON. Format: {"amount":number,"category":"Food"|"Transport"|"Recharge"|"Others","type":"expense"|"income","note":"string","walletId":"Cash"|"bKash"|"Bank"}`;
     
     try {
       const result = await model.generateContent(prompt);
-      const response = await result.response;
-      let rawText = response.text().trim();
-      
-      // ডাটা ক্লিনআপ: যদি এআই ব্যাকটিক দিয়ে ফেলে (```json ... ```)
-      if (rawText.includes("{")) {
-        rawText = rawText.substring(rawText.indexOf("{"), rawText.lastIndexOf("}") + 1);
-      }
-      
-      return JSON.parse(rawText);
+      let rawText = result.response.text().trim();
+      // জঞ্জাল মুক্ত করার জন্য স্লাইস লজিক
+      const start = rawText.indexOf('{');
+      const end = rawText.lastIndexOf('}') + 1;
+      return JSON.parse(rawText.slice(start, end));
     } catch (e) {
-      console.error("Gemini Error:", e);
-      throw new Error("Link Failed");
+      // AI ফেইল করলে লোকাল ব্যাকআপ লজিক
+      const amount = parseInt(text.match(/\d+/)?.[0] || "0");
+      return {
+        amount,
+        category: text.includes("চা") || text.includes("খাবার") ? "🍔 Food" : "🛍️ Others",
+        type: text.includes("পেলাম") || text.includes("salary") ? "income" : "expense",
+        note: text,
+        walletId: "Cash"
+      };
     }
   },
   
   askAssistant: async (question: string, history: any[]) => {
-    const prompt = `
-      Context: ${JSON.stringify(history.slice(0, 15))}.
-      User Question: "${question}".
-      Answer briefly in Bengali. High contrast, sharp professional tone.
-    `;
-    const result = await model.generateContent(prompt);
-    return result.response.text();
+    try {
+      const prompt = `Data: ${JSON.stringify(history.slice(0,10))}. Question: "${question}". Answer in Bengali short.`;
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (e) {
+      return "সিস্টেম একটু বিজি, দয়া করে আবার চেষ্টা করুন।";
+    }
   }
 };

@@ -4,28 +4,21 @@
 
 @layer base {
   body {
-    @apply bg-[#000] text-white antialiased selection:bg-cyan-500/30 overflow-hidden;
+    @apply bg-black text-white antialiased selection:bg-blue-500/30 overflow-hidden;
     font-family: 'Inter', -apple-system, sans-serif;
+    letter-spacing: -0.02em; /* শার্প দেখানোর জন্য */
   }
 }
 
-/* গ্লাস এবং রিফ্লেকশন ইফেক্ট */
-.glass-container {
-  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255,255,255,0.08);
+/* লিকুইড এনিমেশন ফিক্স */
+.wave-layer {
+  animation: fluid-wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
 }
 
-.no-scrollbar::-webkit-scrollbar { display: none; }
-
-/* লিকুইড ওয়েভ ফিজিক্স - আরও ন্যাচারাল মুভমেন্ট */
 @keyframes fluid-wave {
   0% { transform: translateX(0) scaleY(1); }
   50% { transform: translateX(-25%) scaleY(0.9); }
   100% { transform: translateX(-50%) scaleY(1); }
 }
 
-.wave-layer {
-  animation: fluid-wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }

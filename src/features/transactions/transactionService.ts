@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, onSnapshot, orderBy, Timestamp, doc, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, onSnapshot, orderBy, Timestamp, doc, deleteDoc, setDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
 export const transactionService = {
@@ -10,12 +10,24 @@ export const transactionService = {
         category: data.category,
         note: data.note || "",
         walletId: data.walletId || "Cash",
-        toWalletId: data.toWalletId || "", // ট্রান্সফারের জন্য
+        toWalletId: data.toWalletId || "",
         type: data.type || "expense",
+        eventId: data.eventId || null, // ইভেন্ট আইডি থাকলে যোগ হবে
         fee: Number(data.fee || 0),
         date: Timestamp.now()
       });
     } catch (e) { throw e; }
+  },
+  
+  // নতুন ইভেন্ট তৈরি করা
+  createEvent: async (userId: string, name: string, budget: number) => {
+    return await addDoc(collection(db, "events"), {
+      userId,
+      name,
+      budget: Number(budget),
+      isActive: true,
+      createdAt: Timestamp.now()
+    });
   },
   
   deleteTransaction: async (id: string) => {

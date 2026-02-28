@@ -10,33 +10,30 @@
 }
 
 /* লিকুইড ওয়েভ এনিমেশন */
-@keyframes wave {
-  0% { transform: translateX(-25%); }
-  100% { transform: translateX(25%); }
-}
-.animate-wave {
-  animation: wave 4s ease-in-out infinite alternate;
+.water-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background: rgba(59, 130, 246, 0.6);
+  border-radius: 38%;
+  animation: drift 6s infinite linear;
 }
 
-/* প্রিমিয়াম বাটন হোভার গ্লো */
-.btn-glow {
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+.water-wave:nth-child(2) {
+  background: rgba(16, 185, 129, 0.3);
+  animation: drift 9s infinite linear;
+  border-radius: 42%;
 }
-.btn-glow:hover {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-  transform: translateY(-2px);
+
+@keyframes drift {
+  from { transform: rotate(0deg) translate(-25%, -70%); }
+  to { transform: rotate(360deg) translate(-25%, -70%); }
 }
-.btn-glow::after {
-  content: "";
-  position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-  transform: rotate(45deg);
-  transition: 0.5s;
-}
-.btn-glow:hover::after {
-  left: 100%;
+
+.premium-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }

@@ -5,32 +5,29 @@ export const aiService = {
     const input = text.toLowerCase();
     
     let category = "🛍️ Others";
+    let isTransfer = false;
+    let fee = 0;
     
-    // ১. যাতায়াত (Transport)
-    if (/(bus|rickshaw|uber|pathao|ride|fare|rent|বাস|রিকশা|ভাড়া|যাতায়াত|ভাড়|ট্রেন|গাড়ি)/.test(input)) {
-      category = "🚗 Transport";
+    // ১. ট্রান্সফার বা ক্যাশ আউট ডিটেকশন
+    if (/(cash out|transfer|ক্যাশ আউট|পাঠালাম|নিলাম)/.test(input)) {
+      isTransfer = true;
+      category = "🔄 Transfer";
+      // বিকাশের ক্যাশ আউট চার্জ সাধারণত ১.৮৫%
+      if (input.includes("বিকাশ") || input.includes("bkash")) {
+        fee = amount * 0.0185;
+      }
     }
-    // ২. খাবার (Food)
-    else if (/(food|lunch|dinner|breakfast|tea|snacks|coffee|restaurant|hotel|burger|pizza|কাচ্চি|ভাত|খাবার|চা|নাস্তা|সিঙ্গারা|মিষ্টি)/.test(input)) {
-      category = "🍔 Food";
-    }
-    // ৩. রিচার্জ ও বিল (Recharge & Bills)
-    else if (/(recharge|topup|phone|mobile|internet|wifi|bill|electricity|gas|water|রিচার্জ|মোবাইল|বিকাশ|নগদ|বিল|কারেন্ট|ওয়াইফাই)/.test(input)) {
-      category = "📱 Recharge/Bills";
-    }
-    // ৪. বাজার (Grocery)
-    else if (/(grocery|market|bazar|oil|rice|soap|egg|বাজার|সদাই|চাল|ডাল|তেল|ডিম|সবজি|মাছ|মাংস)/.test(input)) {
-      category = "🛒 Grocery";
-    }
-    // ৫. চিকিৎসা (Medical)
-    else if (/(med|medicine|doctor|hospital|pharmacy|ঔষধ|মেডিসিন|ডাক্তার|হাসপাতাল)/.test(input)) {
-      category = "💊 Medical";
-    }
+    // ২. আগের ক্যাটাগরিগুলো (সংক্ষিপ্ত)
+    else if (/(bus|fare|ভাড়া|যাতায়াত)/.test(input)) category = "🚗 Transport";
+    else if (/(food|tea|খাবার|চা)/.test(input)) category = "🍔 Food";
+    else if (/(recharge|mobile|রিচার্জ)/.test(input)) category = "📱 Recharge";
     
     return {
       amount,
       category,
       note: text,
+      isTransfer,
+      fee: parseFloat(fee.toFixed(2)),
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
   }

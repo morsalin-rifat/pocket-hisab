@@ -1,46 +1,38 @@
 import { 
-  collection, addDoc, query, where, onSnapshot, orderBy, Timestamp, getDocs, doc, setDoc
+  collection, addDoc, query, where, onSnapshot, orderBy, Timestamp 
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
 export const transactionService = {
-  // ১. ট্রানজেকশন অ্যাড করা
+  // এন্ট্রি সেভ করার মেইন ফাংশন
   addTransaction: async (userId: string, data: any) => {
-    return await addDoc(collection(db, "transactions"), {
-      userId,
-      amount: parseFloat(data.amount),
-      category: data.category,
-      note: data.note,
-      walletId: data.walletId,
-      date: Timestamp.now()
-    });
+    try {
+      const docRef = await addDoc(collection(db, "transactions"), {
+        userId: userId,
+        amount: Number(data.amount), // স্ট্রিং থেকে নাম্বারে কনভার্ট
+        category: data.category,
+        note: data.note || "",
+        walletId: data.walletId || "Cash",
+        date: Timestamp.now()
+      });
+      console.log("Transaction saved with ID: ", docRef.id);
+      return docRef;
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      throw e;
+    }
   },
 
-  // ২. ওয়ালেট অ্যাড করা
-  addWallet: async (userId: string, wallet: any) => {
-    return await addDoc(collection(db, "wallets"), {
-      userId,
-      name: wallet.name,
-      balance: parseFloat(wallet.balance),
-      icon: wallet.icon,
-      color: wallet.color,
-      createdAt: Timestamp.now()
-    });
-  },
-
-  // ৩. রিয়েল-টাইম ডাটা শোনা (ট্রানজেকশন)
+  // রিয়েল-টাইম ডাটা লিস্ট
   subscribeTransactions: (userId: string, callback: any) => {
-    const q = query(collection(db, "transactions"), where("userId", "==", userId), orderBy("date", "desc"));
+    const q = query(
+      collection(db, "transactions"),
+      where("userId", "==", userId),
+      orderBy("date", "desc")
+    );
     return onSnapshot(q, (snapshot) => {
-      callback(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-  },
-
-  // ৪. রিয়েল-টাইম ডাটা শোনা (ওয়ালেটস)
-  subscribeWallets: (userId: string, callback: any) => {
-    const q = query(collection(db, "wallets"), where("userId", "==", userId));
-    return onSnapshot(q, (snapshot) => {
-      callback(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      callback(list);
     });
   }
 };

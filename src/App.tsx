@@ -1,6 +1,5 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Analytics } from '@vercel/analytics/react';
 import Layout from './components/Layout';
 import { authService } from './features/auth/authService';
 
@@ -11,6 +10,7 @@ const History = lazy(() => import('./features/history/History'));
 const MonthlyReport = lazy(() => import('./features/reports/MonthlyReport'));
 const YearlyReport = lazy(() => import('./features/reports/YearlyReport'));
 const EventManager = lazy(() => import('./features/events/EventManager'));
+const Settings = lazy(() => import('./features/settings/Settings')); // নতুন
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -38,11 +38,11 @@ function App() {
             <Route path="/monthly-report" element={user ? <MonthlyReport user={user} /> : <Navigate to="/login" replace />} />
             <Route path="/yearly-report" element={user ? <YearlyReport user={user} /> : <Navigate to="/login" replace />} />
             <Route path="/events" element={user ? <EventManager user={user} /> : <Navigate to="/login" replace />} />
+            <Route path="/settings" element={user ? <Settings user={user} /> : <Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </Layout>
-      <Analytics />
     </Router>
   );
 }

@@ -6,39 +6,34 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 export const geminiService = {
   analyzeInput: async (text: string) => {
     const prompt = `
-      System: Act as a JSON API.
-      User Text: "${text}"
-      Task: Return ONLY a JSON object like this:
+      Task: Parse user expense/income text into JSON.
+      Input: "${text}"
+      Return ONLY this JSON format:
       {
         "amount": number,
         "category": "🍔 Food" | "🚗 Transport" | "📱 Recharge" | "🛍️ Others",
         "type": "expense" | "income",
-        "note": "short note",
+        "note": "brief summary",
         "walletId": "Cash" | "bKash" | "Bank"
       }
-      Rule: No markdown, no backticks, no talk. JUST JSON.
+      Strict Rules: No markdown, no code blocks, no text explanations. Just pure JSON.
     `;
     
-    const result = await model.generateContent(prompt);
-    const rawText = result.response.text().trim();
-    
-    // JSON Extraction (যদি জেমিনাই বাড়তি কিছু দিয়ে ফেলে)
     try {
-      const start = rawText.indexOf('{');
-      const end = rawText.lastIndexOf('}') + 1;
-      const jsonStr = rawText.slice(start, end);
-      return JSON.parse(jsonStr);
+      const result = await model.generateContent(prompt);
+      const rawText = result.response.text().trim().replace(/```json|```/g, "");
+      return JSON.parse(rawText);
     } catch (e) {
-      console.error("AI Output Error:", rawText);
-      throw new Error("Parse Failed");
+      console.error("AI Link Error:", e);
+      throw new Error("Failed to link with AI");
     }
   },
   
   askAssistant: async (question: string, history: any[]) => {
     const prompt = `
-      System: You are an AI Financial Oracle. Use this data: ${JSON.stringify(history.slice(0, 15))}.
-      User Question: "${question}"
-      Task: Answer very briefly in Bengali. High contrast, sharp tone.
+      You are a smart financial advisor. User history: ${JSON.stringify(history.slice(0, 15))}.
+      Question: "${question}"
+      Answer in Bengali, stay professional, short, and use high-contrast formatting.
     `;
     const result = await model.generateContent(prompt);
     return result.response.text();

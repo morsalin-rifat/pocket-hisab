@@ -4,24 +4,39 @@
 
 @layer base {
   body {
-    @apply bg-[#050505] text-white antialiased overflow-hidden selection:bg-blue-500/30;
+    @apply bg-black text-white antialiased overflow-hidden;
     font-family: 'Inter', sans-serif;
   }
 }
 
-/* হাই-এন্ড কার্ড ডিজাইন */
-.card-shadow {
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1);
+/* লিকুইড ওয়েভ এনিমেশন */
+@keyframes wave {
+  0% { transform: translateX(-25%); }
+  100% { transform: translateX(25%); }
+}
+.animate-wave {
+  animation: wave 4s ease-in-out infinite alternate;
 }
 
-/* কাস্টম স্ক্রলবার হাইড */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* ব্লার ব্যাকগ্রাউন্ড */
-.glass-panel {
-  background: rgba(15, 15, 15, 0.7);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+/* প্রিমিয়াম বাটন হোভার গ্লো */
+.btn-glow {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.btn-glow:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+}
+.btn-glow::after {
+  content: "";
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg);
+  transition: 0.5s;
+}
+.btn-glow:hover::after {
+  left: 100%;
 }

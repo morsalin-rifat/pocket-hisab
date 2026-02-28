@@ -4,35 +4,37 @@ import {
 import { db } from "../../lib/firebase";
 
 export const transactionService = {
-  // এন্ট্রি সেভ করার মেইন ফাংশন
+  // এন্ট্রি সেভ করা
   addTransaction: async (userId: string, data: any) => {
     try {
-      const docRef = await addDoc(collection(db, "transactions"), {
-        userId: userId,
-        amount: Number(data.amount), // স্ট্রিং থেকে নাম্বারে কনভার্ট
+      return await addDoc(collection(db, "transactions"), {
+        userId,
+        amount: Number(data.amount),
         category: data.category,
         note: data.note || "",
         walletId: data.walletId || "Cash",
         date: Timestamp.now()
       });
-      console.log("Transaction saved with ID: ", docRef.id);
-      return docRef;
     } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error("Save Error:", e);
       throw e;
     }
   },
 
-  // রিয়েল-টাইম ডাটা লিস্ট
-  subscribeTransactions: (userId: string, callback: any) => {
+  // রিয়েল-টাইম লিসেনার
+  subscribeTransactions: (userId: string, callback: (data: any[]) => void) => {
+    // নোট: যদি ডাটা না দেখায়, তবে কনসোল চেক করুন। ফায়ারবেস একটি লিঙ্ক দিবে ইনডেক্স তৈরি করার জন্য।
     const q = query(
       collection(db, "transactions"),
       where("userId", "==", userId),
       orderBy("date", "desc")
     );
+
     return onSnapshot(q, (snapshot) => {
-      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      callback(list);
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      callback(data);
+    }, (error) => {
+      console.error("Firestore Subscription Error:", error);
     });
   }
 };

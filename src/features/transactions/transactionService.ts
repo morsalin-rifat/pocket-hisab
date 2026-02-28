@@ -2,6 +2,7 @@ import { collection, addDoc, query, where, onSnapshot, Timestamp } from "firebas
 import { db } from "../../lib/firebase";
 
 export const transactionService = {
+  // ১. লেনদেন যোগ করা
   addTransaction: async (userId: string, data: any) => {
     try {
       return await addDoc(collection(db, "transactions"), {
@@ -17,10 +18,12 @@ export const transactionService = {
     } catch (e) { throw e; }
   },
   
+  // ২. রিয়েল-টাইম ডাটা সিঙ্ক
   subscribeTransactions: (userId: string, callback: (data: any[]) => void) => {
     const q = query(collection(db, "transactions"), where("userId", "==", userId));
     return onSnapshot(q, (snapshot) => {
-      callback(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      callback(data);
     });
   }
 };

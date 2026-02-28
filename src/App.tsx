@@ -6,45 +6,37 @@ import { authService } from './features/auth/authService';
 const IntroScreen = lazy(() => import('./features/intro/IntroScreen'));
 const Login = lazy(() => import('./features/auth/Login'));
 const Dashboard = lazy(() => import('./features/dashboard/Dashboard'));
-const History = lazy(() => import('./features/history/History')); // নতুন ইম্পোর্ট
+const History = lazy(() => import('./features/history/History'));
+const MonthlyReport = lazy(() => import('./features/reports/MonthlyReport'));
+const YearlyReport = lazy(() => import('./features/reports/YearlyReport'));
+const EventManager = lazy(() => import('./features/events/EventManager'));
 
 function App() {
-  const [user, setUser] = useState < any > (null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [hasLoggedInBefore] = useState(localStorage.getItem('isLoggedIn') === 'true');
-  
+
   useEffect(() => {
-    const unsubscribe = authService.subscribeToAuthChanges((currentUser: any) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
+    const unsubscribe = authService.subscribeToAuthChanges((u: any) => { setUser(u); setLoading(false); });
     return () => unsubscribe();
   }, []);
-  
+
   if (loading && hasLoggedInBefore) {
-    return (
-      <div className="bg-[#020617] h-screen flex flex-col items-center justify-center">
-        <div className="w-20 h-20 bg-blue-600 rounded-[30px] flex items-center justify-center text-4xl shadow-[0_0_50px_rgba(37,99,235,0.3)] animate-pulse">
-           💰
-        </div>
-        <div className="mt-8 flex gap-1">
-           <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0s'}} />
-           <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}} />
-           <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.4s'}} />
-        </div>
-      </div>
-    );
+    return <div className="bg-black h-screen flex items-center justify-center text-white font-black tracking-[10px] animate-pulse italic">POCKET HISAB</div>;
   }
-  
+
   return (
     <Router>
       <Layout>
-        <Suspense fallback={<div className="h-screen bg-[#020617]" />}>
+        <Suspense fallback={<div className="h-screen bg-black" />}>
           <Routes>
             <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <IntroScreen />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
             <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" replace />} />
             <Route path="/history" element={user ? <History user={user} /> : <Navigate to="/login" replace />} />
+            <Route path="/monthly-report" element={user ? <MonthlyReport user={user} /> : <Navigate to="/login" replace />} />
+            <Route path="/yearly-report" element={user ? <YearlyReport user={user} /> : <Navigate to="/login" replace />} />
+            <Route path="/events" element={user ? <EventManager user={user} /> : <Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

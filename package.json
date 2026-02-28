@@ -10,11 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.6.1",
+    "firebase": "^10.7.1",
+    "framer-motion": "^10.12.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.11.2",
-    "framer-motion": "^10.12.16",
-    "firebase": "^10.7.1"
+    "react-router-dom": "^6.11.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",

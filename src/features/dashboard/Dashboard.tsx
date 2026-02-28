@@ -11,7 +11,7 @@ const Dashboard = ({ user }: { user: any }) => {
       {/* হেডার */}
       <div className="px-8 pt-12 pb-4 flex items-center justify-between z-30">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-gray-800 to-black border border-white/10 flex items-center justify-center text-sm font-bold shadow-xl">
+          <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-sm font-bold shadow-xl">
             {user?.displayName?.[0] || 'U'}
           </div>
           <div>
@@ -24,13 +24,9 @@ const Dashboard = ({ user }: { user: any }) => {
         </button>
       </div>
 
-      {/* মেইন বডি */}
       <div className="flex-1 overflow-y-auto no-scrollbar px-8 pb-32 pt-4">
-        
-        {/* লিকুইড ব্যালেন্স */}
         <LiquidBalance percentage={75} amount="12,500.00" />
 
-        {/* ওয়ালেট সেকশন */}
         <div className="mb-16">
           <div className="flex justify-between items-center mb-8 px-2">
             <h3 className="text-[10px] font-black uppercase tracking-[4px] text-white/30 text-center flex-1 ml-10">Wallet Portfolio</h3>
@@ -39,7 +35,6 @@ const Dashboard = ({ user }: { user: any }) => {
           <SwipableCards />
         </div>
 
-        {/* টাইমলাইন প্লেসহোল্ডার */}
         <div className="mt-10">
           <h3 className="text-[10px] font-black uppercase tracking-[4px] text-white/20 mb-6 px-2 text-center">Recent Activity</h3>
           <div className="py-12 bg-white/[0.02] border border-dashed border-white/5 rounded-[40px] flex items-center justify-center italic text-xs text-white/20">
@@ -48,19 +43,18 @@ const Dashboard = ({ user }: { user: any }) => {
         </div>
       </div>
 
-      {/* ফ্লোটিং ডক */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[85%] z-40">
         <div className="bg-white/5 backdrop-blur-3xl p-2 rounded-[35px] flex items-center justify-between border border-white/10 shadow-2xl">
-          <button className="flex-1 py-3 text-[9px] font-black tracking-widest text-white/30 uppercase">Scribe</button>
+          <button className="flex-1 py-3 text-[9px] font-black tracking-widest text-white/30 uppercase text-center">Scribe</button>
           
           <motion.button 
-            whileTap={{ scale: 0.9, rotate: 90 }}
+            whileTap={{ scale: 0.9 }}
             className="w-14 h-14 bg-gradient-to-tr from-blue-600 to-cyan-500 rounded-[22px] flex items-center justify-center shadow-lg shadow-cyan-500/20 -mt-10 border-[5px] border-black text-2xl"
           >
             ✨
           </motion.button>
 
-          <button className="flex-1 py-3 text-[9px] font-black tracking-widest text-white/30 uppercase">Analytics</button>
+          <button className="flex-1 py-3 text-[9px] font-black tracking-widest text-white/30 uppercase text-center">Nexus</button>
         </div>
       </div>
 

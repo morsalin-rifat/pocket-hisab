@@ -21,7 +21,12 @@ const Dashboard = ({ user }: { user: any }) => {
     if (!user?.uid) return;
     
     const unsubscribe = transactionService.subscribeTransactions(user.uid, (data) => {
-      setTransactions(data);
+      // ড্যাশবোর্ডে দেখানোর আগে ডাটাগুলোকে তারিখ অনুযায়ী সাজিয়ে নেওয়া (Frontend Sorting)
+      const sortedData = [...data].sort((a, b) => b.date.seconds - a.date.seconds);
+      
+      setTransactions(sortedData);
+      
+      // টোটাল খরচ ক্যালকুলেশন
       const total = data.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
       setTotalExpense(total);
     });
@@ -33,7 +38,7 @@ const Dashboard = ({ user }: { user: any }) => {
   const remainingPercent = Math.max(0, (currentBalance / monthlyBudget) * 100);
   
   return (
-    <div className="relative h-full w-full bg-black flex flex-col overflow-hidden selection:bg-cyan-500/30">
+    <div className="relative h-full w-full bg-black flex flex-col overflow-hidden">
       
       {/* হেডার */}
       <div className="px-8 pt-12 pb-4 flex items-center justify-between z-30">
@@ -51,37 +56,48 @@ const Dashboard = ({ user }: { user: any }) => {
         <button onClick={() => authService.logout()} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs opacity-40">✕</button>
       </div>
 
-      {/* মেইন কন্টেন্ট */}
+      {/* মেইন বডি */}
       <div className="flex-1 overflow-y-auto no-scrollbar px-8 pb-48 pt-4">
+        
+        {/* লিকুইড ব্যালেন্স (এটি এখন কমবে) */}
         <LiquidBalance percentage={remainingPercent} amount={currentBalance.toLocaleString()} />
 
         <div className="mb-16">
           <div className="flex justify-between items-center mb-8 px-2 text-center">
-            <h3 className="text-[10px] font-black uppercase tracking-[4px] text-white/30 flex-1 ml-8">Portfolio</h3>
-            <span className="text-[8px] font-bold text-cyan-500 animate-pulse">SWIPE</span>
+            <h3 className="text-[10px] font-black uppercase tracking-[4px] text-white/30 flex-1 ml-8">My Assets</h3>
+            <span className="text-[8px] font-bold text-cyan-500 animate-pulse uppercase">Swipe</span>
           </div>
           <SwipableCards />
         </div>
 
-        {/* রিসেন্ট ফিড */}
+        {/* রিসেন্ট অ্যাক্টিভিটি */}
         <div className="mt-8">
           <h3 className="text-[10px] font-black uppercase tracking-[4px] text-white/20 mb-8 px-2 text-center underline decoration-cyan-500/20 underline-offset-[12px]">Activity Feed</h3>
+          
           <div className="space-y-4">
             {transactions.length === 0 ? (
-              <div className="py-16 bg-white/[0.02] border border-dashed border-white/5 rounded-[40px] flex items-center justify-center italic text-xs text-white/10 tracking-widest">ZERO ACTIVITY</div>
+              <div className="py-16 bg-white/[0.02] border border-dashed border-white/5 rounded-[40px] flex items-center justify-center italic text-xs text-white/10 tracking-widest uppercase">
+                Zero Records Found
+              </div>
             ) : (
               transactions.slice(0, 10).map((t) => (
-                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} key={t.id} className="p-5 bg-white/[0.02] border border-white/5 rounded-[32px] flex justify-between items-center group">
+                <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} key={t.id} 
+                  className="p-5 bg-white/[0.02] border border-white/5 rounded-[32px] flex justify-between items-center"
+                >
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-xl shadow-inner border border-white/5">{t.category?.split(' ')[0] || '💰'}</div>
+                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-xl border border-white/5">
+                      {t.category?.split(' ')[0] || '💰'}
+                    </div>
                     <div>
                       <p className="text-xs font-black text-white/80">{t.category?.split(' ').slice(1).join(' ') || t.category}</p>
-                      <p className="text-[9px] text-white/20 uppercase tracking-[2px] line-clamp-1">{t.note || 'No description'}</p>
+                      <p className="text-[9px] text-white/20 uppercase tracking-[1px]">{t.note || 'Regular Entry'}</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-black text-red-500/80">-{t.amount} ৳</p>
-                    <p className="text-[8px] text-white/10 uppercase mt-1">{t.date?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p className="text-[8px] text-white/10 mt-1 uppercase">
+                      {t.date?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
                   </div>
                 </motion.div>
               ))
@@ -90,11 +106,19 @@ const Dashboard = ({ user }: { user: any }) => {
         </div>
       </div>
 
-      {/* ফ্লোটিং ডক */}
+      {/* অ্যাকশন ডক */}
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-[90%] z-40">
         <div className="bg-zinc-900/80 backdrop-blur-3xl p-2.5 rounded-[40px] flex items-center justify-between border border-white/10 shadow-2xl">
           <button onClick={() => setIsManualOpen(true)} className="flex-1 py-3.5 text-[10px] font-black tracking-[2px] text-white/40 uppercase text-center active:text-cyan-400">Manual</button>
-          <motion.button onClick={() => setIsMagicOpen(true)} whileTap={{ scale: 0.9 }} className="w-16 h-16 bg-gradient-to-tr from-blue-600 via-cyan-500 to-emerald-400 rounded-[28px] flex items-center justify-center -mt-14 border-[6px] border-black text-3xl shadow-2xl shadow-cyan-500/20">✨</motion.button>
+          
+          <motion.button 
+            onClick={() => setIsMagicOpen(true)}
+            whileTap={{ scale: 0.9 }}
+            className="w-16 h-16 bg-gradient-to-tr from-blue-600 via-cyan-500 to-emerald-400 rounded-[28px] flex items-center justify-center -mt-14 border-[6px] border-black text-3xl shadow-2xl transition-all"
+          >
+            ✨
+          </motion.button>
+
           <button onClick={() => navigate('/history')} className="flex-1 py-3.5 text-[10px] font-black tracking-[2px] text-white/40 uppercase text-center active:text-cyan-400">History</button>
         </div>
       </div>

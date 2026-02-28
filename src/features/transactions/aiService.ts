@@ -10,20 +10,17 @@ export const aiService = {
     let toWalletId = ""; 
     let fee = 0;
 
-    // ১. ট্রান্সফার/ক্যাশ আউট ডিটেকশন
-    if (/(cash out|transfer|ক্যাশ আউট|পাঠালাম|নিলাম|transfer)/.test(input)) {
+    if (/(cash out|transfer|ক্যাশ আউট|পাঠালাম|নিলাম)/.test(input)) {
       type = "transfer";
       category = "🔄 Transfer";
       walletId = input.includes("bkash") || input.includes("বিকাশ") ? "bKash" : "Bank";
       toWalletId = "Cash";
       if (walletId === "bKash") fee = amount * 0.0185;
-    } 
-    // ২. ইনকাম ডিটেকশন
-    else if (/(salary|income|received|got|bonus|পেলাম|জমা|আসলো|দিল)/.test(input)) {
+    } else if (/(salary|income|received|got|bonus|পেলাম|জমা|আসলো|দিল)/.test(input)) {
       type = "income";
       category = "💰 Income";
     }
-    // ৩. ক্যাটাগরি (Expense হলে)
+
     if (type === "expense") {
       if (/(bus|fare|ভাড়া|যাতায়াত|রিকশা)/.test(input)) category = "🚗 Transport";
       else if (/(food|tea|খাবার|চা|সিঙ্গারা|lunch|dinner)/.test(input)) category = "🍔 Food";

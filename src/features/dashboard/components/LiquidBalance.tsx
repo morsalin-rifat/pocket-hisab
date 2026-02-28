@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const LiquidBalance = ({ percentage = 75, amount = "12,500.00" }) => {
+export const LiquidBalance = ({ percentage = 60, amount = "12,500.00" }) => {
   return (
     <div className="relative w-full h-[220px] rounded-[48px] bg-black overflow-hidden mb-12 border border-white/10 shadow-2xl">
       
